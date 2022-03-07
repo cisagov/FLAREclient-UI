@@ -5,6 +5,10 @@ import { useHistory } from 'react-router';
 import DeleteIcon from "@material-ui/icons/Delete";
 import { deleteCollection } from '../../redux/actions/collections';
 import { useDispatch } from 'react-redux';
+import { deleteServer, refreshServer } from '../../redux/actions/servers';
+import { getServerCollections } from '../../redux/actions/collections';
+import { useSelector } from 'react-redux';
+import { useSnackbar } from 'notistack';
 import {
   Button,
   Dialog,
@@ -32,9 +36,12 @@ import {
 } from 'react-feather';
 
 function CollectionList({apiRoot, collections, server, ...rest}) {
+
   const [selectedServer, setSelectedServer] = useState(null);
   const [selectedCollection, setSelectedCollection] = useState(null);
   const [open, setOpen] = useState(false);
+  const [refreshActive, setRefreshActive] = React.useState(false);
+  const { enqueueSnackbar } = useSnackbar();
   const history = useHistory();
   const canDownload = (collection) => {
     if (collection.taxiiVersion.match('TAXII1')) {
@@ -46,14 +53,28 @@ function CollectionList({apiRoot, collections, server, ...rest}) {
   const handleClose = () => {
     setOpen(false);
     setSelectedCollection(null);
-    history.push("/app/management/servers");
-  };
+    window.location.reload(false);
+  }
 
   const performDeleteAndClose = () => {
     dispatch(deleteCollection(selectedServer, selectedCollection.id));
-    handleClose();
+    handleRefresh(server.label);
+    setOpen(false);
+    setSelectedCollection(null);
   }
-  
+
+  const handleRefresh = async (label) => {
+    setRefreshActive(true);
+    setSelectedServer(label);
+    enqueueSnackbar('Refresh of '+label+' requested.');
+    await dispatch(refreshServer(label));
+    await dispatch(getServerCollections(label));
+    setRefreshActive(false);
+    setSelectedServer(null);
+    window.location.reload(false);
+  }
+
+
   const canUpload = (collection) => {
     if (collection.taxiiVersion.match('TAXII1')) {
       return collection.collectionObject.available;
@@ -73,7 +94,7 @@ function CollectionList({apiRoot, collections, server, ...rest}) {
 });
   
   const dispatch = useDispatch();
-    
+
   return (
     <Table id="collectionlist" size="small">
       <TableHead>

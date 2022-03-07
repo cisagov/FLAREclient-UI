@@ -294,11 +294,11 @@ console.log(update);
 
     newQuery += '&limit='+numToGrab;
 
-    if (myNext > 0 && currentServer.title.toUpperCase().includes("FLARE")) {
+    if (myNext > 0 && currentServer.title.toUpperCase().includes("AIS 2")) {
       newQuery += '&next=' + myNext;
     }
 
-    if (myAddedAfterDate!==null && !currentServer.title.toUpperCase().includes("FLARE")) {
+    if (myAddedAfterDate!==null && !currentServer.title.toUpperCase().includes("AIS 2")) {
       newQuery+="&added_after="+myAddedAfterDate;
     } else {
       if (addedAfterDate && addedAfterTime) {
@@ -308,7 +308,7 @@ console.log(update);
       }
     }
 
-    if (myValidOnAfterFromDate!==null && !currentServer.title.toUpperCase().includes("FLARE")) {
+    if (myValidOnAfterFromDate!==null && !currentServer.title.toUpperCase().includes("AIS 2")) {
         newQuery+="&valid_on_after="+myValidOnAfterFromDate;
     }
     else if (validOnAfterFromDate && validOnAfterFromTime && !validOnAfterUntilDate && !validOnAfterUntilTime) {
@@ -935,7 +935,7 @@ console.log(update);
               </Select>
             </Box>
           </Grid>
-          {currentServer.title.toUpperCase().includes("FLARE")?<Grid container spacing={3} style={{border: "1px solid gray"}}>
+          {currentServer.title.toUpperCase().includes("AIS 2")?<Grid container spacing={3} style={{border: "1px solid gray"}}>
             <Grid item xs={12} md={3} style={{textAlign: "center"}}>
               <Button
                 id="addFilter"

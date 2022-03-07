@@ -881,7 +881,7 @@ function Download2x({className, server, collection, ...rest}) {
                     </Box>
                   </Container>}
                 </Grid>
-                {currentServer.title.toUpperCase().includes("FLARE")?<Grid container spacing={3} style={{border: "1px solid gray"}}>
+                {currentServer.title.toUpperCase().includes("AIS 2")?<Grid container spacing={3} style={{border: "1px solid gray"}}>
                   <Grid item xs={12} md={3} style={{textAlign: "center"}}>
                     <Button
                       id="addFilter"
