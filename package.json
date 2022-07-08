@@ -56,7 +56,7 @@
     "jss-rtl": "^0.3.0",
     "lodash": "^4.17.20",
     "mini-css-extract-plugin": "0.9.0",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "node-fetch": "^2.6.1",
     "notistack": "^0.9.17",
     "nprogress": "^0.2.0",
