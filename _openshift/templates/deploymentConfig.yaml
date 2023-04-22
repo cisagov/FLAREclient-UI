@@ -1,0 +1,71 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: deployment-config-template
+objects:
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      name: flareclient-ui
+    spec:
+      replicas: 1
+      selector:
+        name: flareclient-ui
+      strategy:
+        type: Rolling
+        rollingParams:
+      template:
+        metadata:
+          labels:
+            name: flareclient-ui
+        spec:
+          containers:
+            - env:
+              - name: FLARE_CLIENT_UI_SVC_HOST
+                value: flareclient-ui.${NAMESPACE}.svc
+              - name: FLARE_CLIENT_SVC_HOST
+                value: flareclient.${NAMESPACE}.svc
+              - name: FLARE_CLIENT_SVC_PORT
+                value: "8083"
+              - name: SECRETS_DIR
+                value: "/mnt/secrets/"
+              name: flareclient-ui
+              image: ${DOCKER_REPO_URL}/${IMAGE_NAMESPACE}/flareclient-ui:${IMAGE_VERSION}
+              volumeMounts:
+                - name: secrets
+                  mountPath: /mnt/secrets
+                  readOnly: true
+              imagePullPolicy: Always
+          volumes:
+            - name: secrets
+              secret:
+                secretName: flareclient-ui
+                items:
+                  - key: flareclient_ui_pem
+                    path: flareclient-ui.pem
+                  - key: flareclient_ui_key
+                    path: flareclient-ui.key
+                  - key: flareclient_pem
+                    path: flareclient.pem
+          imagePullSecrets:
+            - name: artifactory-puller
+      triggers:
+      - type: ConfigChange
+parameters:
+  - name: NAMESPACE
+    displayName: Openshift namespace (project)
+    description: Openshift namespace (project) this application resides in
+    required: true
+  - name: IMAGE_NAMESPACE
+    displayName: Docker image namespace
+    description: The docker namespace that the image belongs to
+    required: true
+  - name: IMAGE_VERSION
+    displayName: Image Version
+    description: Docker image version
+    required: true
+  - name: DOCKER_REPO_URL
+    displayName: Docker Repo URL
+    description: Docker repository URL
+    required: true

@@ -1,0 +1,5 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+builddate=`date +'%m\\/%d\\/%y %H:%M:%S'`
+sed -i "s/build:.*$/build: '$builddate',/" $DIR/../../src/js/config/build.js
+git add $DIR/../../src/js/config/build.js

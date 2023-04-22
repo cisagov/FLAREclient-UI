@@ -1,0 +1,25 @@
+version: '2'
+services:
+
+  nginx_proxy:
+    image: nginx
+    environment:
+      # This env variable will only exist when docker-machine is being used; we are passing it through to the container
+      # so a script in the container (/tmp/docker/set_docker_host_ip.sh) can set a DOCKER_HOST_IP environment variable
+      # to an IP which can be used to connect to the host machine (i.e., the machine where you have gulp running).
+      - DOCKER_MACHINE_NAME
+      - DOCKER_HOST_IP=${dockerHostAddress}
+      - GATEWAY=${flareMicroServicesGateway}
+      - WEBPACK_DEV_SERVER_PORT=3000
+    volumes:
+      - ./local-development:/tmp/docker
+      - ./public:/opt/dist
+    ports:
+      - "19080:80"
+      - "19443:443"
+    # The envsubst command will swap out anything in the input file that begins with $ with a corresponding env
+    # variable, or if one can't be found, an empty string. Since nginx conf files also make use of $-prefixed
+    # variables, we will pass in the specific variables we want envsubst to replace (this is called the "shell
+    # format" argument). Also note that we need to escape our $-prefixed variables, docker-compose style, to
+    # prevent docker-compose from trying to replace the variables (i.e., $VAR becomes $$VAR).
+    command: /bin/bash -c "env && envsubst '$$DOCKER_HOST_IP $$WEBPACK_DEV_SERVER_PORT $$GATEWAY' < /tmp/docker/nginx.conf.tpl > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
